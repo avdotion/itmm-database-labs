@@ -2,8 +2,10 @@
   STATUS:
       REVIEWED
   COMMENTS:
-      First three points are done
+      DONE
 */
+
+DROP DATABASE laboratory_work;
 
 CREATE DATABASE laboratory_work;
 USE laboratory_work;
@@ -101,3 +103,144 @@ INSERT INTO orders (client_id, employee_id, cost)
 VALUES (11, 5, 1250);
 
 SELECT * FROM orders;
+
+CREATE TABLE services (
+    PRIMARY KEY (service_id),
+    service_id  INT       NOT NULL AUTO_INCREMENT,
+    name        CHAR(50)  NOT NULL,
+    description CHAR(100),
+    cost        INT       UNSIGNED NOT NULL
+);
+
+INSERT INTO services (name, cost)
+VALUES ('Cleaning', 510),
+       ('Windows washing', 1200),
+       ('Dry cleaning', 780);
+
+CREATE TABLE orders_handler (
+    order_id    INT NOT NULL,
+    employee_id INT NOT NULL
+);
+
+ALTER TABLE orders
+    ADD service_id INT DEFAULT 1 AFTER employee_id;
+
+INSERT INTO orders_handler (order_id, employee_id)
+    SELECT order_id, employee_id FROM orders;
+
+ALTER TABLE orders
+    DROP FOREIGN KEY fk_employee,
+    DROP COLUMN employee_id,
+    DROP COLUMN cost;
+
+ALTER TABLE orders_handler
+    ADD CONSTRAINT fk_order
+    FOREIGN KEY    (order_id)
+    REFERENCES     orders (order_id)
+    ON UPDATE RESTRICT
+    ON DELETE RESTRICT,
+
+    ADD CONSTRAINT fk_employee
+    FOREIGN KEY    (employee_id)
+    REFERENCES     staff (employee_id)
+    ON UPDATE RESTRICT
+    ON DELETE RESTRICT;
+
+ALTER TABLE orders
+    ADD CONSTRAINT fk_service
+    FOREIGN KEY    (service_id)
+    REFERENCES     services (service_id)
+    ON UPDATE RESTRICT
+    ON DELETE RESTRICT;
+
+SELECT * FROM orders;
+SELECT * FROM orders_handler;
+
+INSERT INTO orders (client_id, service_id)
+VALUES (6, 2),
+       (7, 2),
+       (3, 2),
+       (5, 1),
+       (6, 3),
+       (2, 3),
+       (9, 2),
+       (1, 2),
+       (8, 3),
+       (1, 2),
+       (4, 3),
+       (5, 3),
+       (3, 3),
+       (9, 3),
+       (7, 1),
+       (7, 1),
+       (1, 3),
+       (3, 2),
+       (2, 3),
+       (1, 1);
+
+SELECT * FROM orders;
+SELECT * FROM orders_handler;
+SELECT * FROM staff;
+
+INSERT INTO orders_handler (order_id, employee_id)
+VALUES (31, 4),
+       (37, 6),
+       (32, 6),
+       (26, 10),
+       (26, 5),
+       (24, 9),
+       (23, 1),
+       (22, 7),
+       (39, 2),
+       (30, 4),
+       (24, 9),
+       (35, 6),
+       (39, 10),
+       (24, 7),
+       (31, 2),
+       (25, 10),
+       (33, 6),
+       (30, 1),
+       (26, 8),
+       (30, 10),
+       (27, 6),
+       (22, 8),
+       (30, 6),
+       (30, 2),
+       (39, 6),
+       (26, 8),
+       (25, 7),
+       (40, 8),
+       (24, 5),
+       (35, 7),
+       (25, 9),
+       (37, 8),
+       (31, 10),
+       (29, 5),
+       (34, 2),
+       (30, 7),
+       (27, 7),
+       (23, 2),
+       (26, 4),
+       (28, 3),
+       (38, 6),
+       (24, 7),
+       (31, 9),
+       (25, 7),
+       (22, 7),
+       (25, 5),
+       (29, 4),
+       (25, 9),
+       (23, 3),
+       (38, 4),
+       (31, 6),
+       (40, 1),
+       (36, 8),
+       (37, 7),
+       (35, 6),
+       (36, 4),
+       (25, 6),
+       (34, 9),
+       (24, 5);
+
+SELECT * FROM orders_handler;
