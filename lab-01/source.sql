@@ -49,6 +49,8 @@ ALTER TABLE orders
     ON UPDATE RESTRICT
     ON DELETE RESTRICT;
 
+SHOW TABLES;
+
 DESC clients;
 DESC staff;
 DESC orders;
@@ -102,7 +104,9 @@ VALUES (9, 2, 1750),
 INSERT INTO orders (client_id, employee_id, cost)
 VALUES (11, 5, 1250);
 
+SELECT * FROM clients;
 SELECT * FROM orders;
+SELECT * FROM staff;
 
 CREATE TABLE services (
     PRIMARY KEY (service_id),
@@ -117,7 +121,7 @@ VALUES ('Cleaning', 510),
        ('Windows washing', 1200),
        ('Dry cleaning', 780);
 
-CREATE TABLE orders_handler (
+CREATE TABLE orders_staff (
     order_id    INT NOT NULL,
     employee_id INT NOT NULL
 );
@@ -125,7 +129,7 @@ CREATE TABLE orders_handler (
 ALTER TABLE orders
     ADD service_id INT DEFAULT 1 AFTER employee_id;
 
-INSERT INTO orders_handler (order_id, employee_id)
+INSERT INTO orders_staff (order_id, employee_id)
     SELECT order_id, employee_id FROM orders;
 
 ALTER TABLE orders
@@ -133,7 +137,7 @@ ALTER TABLE orders
     DROP COLUMN employee_id,
     DROP COLUMN cost;
 
-ALTER TABLE orders_handler
+ALTER TABLE orders_staff
     ADD CONSTRAINT fk_order
     FOREIGN KEY    (order_id)
     REFERENCES     orders (order_id)
@@ -153,8 +157,14 @@ ALTER TABLE orders
     ON UPDATE RESTRICT
     ON DELETE RESTRICT;
 
+SHOW TABLES;
+
+DESC orders;
+DESC orders_staff;
+DESC services;
+
 SELECT * FROM orders;
-SELECT * FROM orders_handler;
+SELECT * FROM orders_staff;
 
 INSERT INTO orders (client_id, service_id)
 VALUES (6, 2),
@@ -179,10 +189,10 @@ VALUES (6, 2),
        (1, 1);
 
 SELECT * FROM orders;
-SELECT * FROM orders_handler;
+SELECT * FROM orders_staff;
 SELECT * FROM staff;
 
-INSERT INTO orders_handler (order_id, employee_id)
+INSERT INTO orders_staff (order_id, employee_id)
 VALUES (31, 4),
        (37, 6),
        (32, 6),
@@ -243,4 +253,10 @@ VALUES (31, 4),
        (34, 9),
        (24, 5);
 
-SELECT * FROM orders_handler;
+SELECT * FROM orders;
+SELECT * FROM orders_staff;
+SELECT * FROM services;
+
+SHOW TABLES;
+DESC clients;
+DESC staff;
