@@ -1,14 +1,14 @@
 /*
   STATUS:
-      UNREVIEWED
+      REVIEWED
   COMMENTS:
-      NOT-STATED
+      DONE
 */
 
 /* 1.1 */
 SELECT name, description, cost
-  FROM services
- ORDER BY cost DESC;
+FROM services
+ORDER BY cost DESC, name ASC;
 
 /* 1.2 */
 SELECT service_id, name, description, cost
@@ -56,14 +56,15 @@ SELECT name, (1 / cost * 1000) AS happines
 
 SELECT clients.name, orders.order_datetime
   FROM clients, orders, services
- WHERE orders.client_id = clients.client_id;
+ WHERE orders.client_id = clients.client_id
+   AND orders.service_id = services.service_id;
 
 /* 2.2 */
 
 SELECT clients.name, orders.order_datetime, services.name
   FROM clients, orders, services
  WHERE orders.client_id = clients.client_id
-   AND orders.service_id = orders.service_id;
+   AND orders.service_id = services.service_id;
 
 /* 2.3 */
 
@@ -74,13 +75,13 @@ SELECT name
 
 /* 2.4 */
 
-SELECT clients.name, address, phone
-  FROM clients LIMIT 5
+(SELECT clients.name, address, phone
+   FROM clients LIMIT 5)
 
- UNION
+  UNION
 
-SELECT services.name, description, cost
-  FROM services LIMIT 10;
+(SELECT services.name, description, cost
+   FROM services LIMIT 10);
 
 /* 3.1 */
 
@@ -123,6 +124,8 @@ SELECT GROUP_CONCAT(services.name, ' - ', orders_staff.order_id), order_datetime
   FROM clients, services, orders_staff, orders, staff
  WHERE clients.client_id = orders.client_id
    AND orders_staff.order_id = orders.order_id
+   AND orders.service_id = services.service_id
+   AND orders_staff.employee_id = staff.employee_id
  GROUP BY order_datetime;
 
 /* 4.1 */
@@ -174,6 +177,7 @@ SELECT * FROM staff;
 SELECT staff.employee_id,
        staff.name,
        SUM(services.cost) / staff_on_each_order.amt AS revenue,
+       COUNT(orders.order_id) as orders_done,
        MONTH(orders.order_datetime) AS month
   FROM staff,
        services,
@@ -189,4 +193,4 @@ SELECT staff.employee_id,
    AND orders.service_id = services.service_id
    AND orders.order_id = staff_on_each_order.order_id
    AND TO_DAYS(NOW()) - TO_DAYS(orders.order_datetime) < 30 * 6
- GROUP BY staff.employee_id;
+ GROUP BY staff.employee_id, month;
